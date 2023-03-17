@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8"/>
+    <title>index</title>
+</head>
+<body>
+<iframe id="iframe_display" name="iframe_display" style="display: none;"></iframe>
+<form action="/v1/file/upload" method="post" enctype="multipart/form-data" target="iframe_display" >
+    <div>
+        <input type="file" name="uploads" multiple="multiple"/>
+    </div>
+    <br/>
+    <div>
+        <button onclick="myReload()" >上传文件</button>
+    </div>
+</form>
+
+<button><a href="/v1/file/list" methods="get">list</a></button>
+<br>
+<hr>
+<hr>
+<div id="datalist">
+    <div v-for="file in file_lists">
+        <div>
+            <b><a v-bind:href=downApi+file.name download>{{ file.name }}</a></b>
+            <div v-bind:title="file.path">{{ file.path }}</div>
+            <div v-bind:title="file.size">{{ file.size }}</div>
+            <div v-bind:title="file.date">{{ file.date }}</div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+<script src="js/vue.global.js"></script>
+<script src="js/axios.min.js"></script>
+<script src="js/jquery.min.js"></script>
+<script>
+    const vueA = Vue.createApp({
+        data() {
+            return {
+                file_lists: [],
+                downApi: "/v1/file/download/"
+            }
+        },
+        created() {
+            this.getFileData()
+        }, methods: {
+            getFileData() {
+                //axios发送ajax请求得到数据
+                axios.get("/v1/file/list")
+                    .then(response => {
+                        console.log("response >>>>>>>", response)
+                        this.file_lists = response.data.data
+                        console.log("this.file_lists >>>>>>>", this.file_lists)
+                    })
+            },
+
+        }
+    })
+    vueA.mount('#datalist')
+
+    function openView(s) {
+        window.open('./file/download/' + s.toString())
+    }
+
+    function myReload(){
+        window.location.reload()
+    }
+
+</script>
