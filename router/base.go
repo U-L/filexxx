@@ -8,6 +8,7 @@ import (
 func InitBaseRouter(Router *gin.RouterGroup)  {
 	BaseRouter := Router.Group("base")
 	{
-		BaseRouter.GET("",api.GetView)
+		BaseRouter.GET("/ipview",api.GetIpData)
+		BaseRouter.GET("/myip",api.SelectIp)
 	}
 }

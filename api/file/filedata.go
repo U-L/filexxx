@@ -27,7 +27,7 @@ func GetFileData(dir string) []map[string]string{
 
 		dMap["name"] = fileInfo.Name()
 		dMap["ext"] = pathExt
-		dMap["size"] = strconv.FormatInt(fileInfo.Size(), 10)
+		dMap["size"] = strconv.FormatInt(fileInfo.Size()/1024, 10)
 		dMap["date"] = fileInfo.ModTime().Format("2006-01-02 15:04:05")
 		dMap["path"] = "files/"+fileInfo.Name()
 		ms = append(ms,dMap)

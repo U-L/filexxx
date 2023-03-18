@@ -1,6 +1,7 @@
 package file
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"net/http"
@@ -39,6 +40,7 @@ func ListFile(c *gin.Context) {
 func DownloadFile(c *gin.Context) {
 	if pa := c.Param("name"); pa != "" {
 		target := filepath.Join(GetAbsFile()+"/files/", pa)
+		fmt.Println(target)
 		//c.Header("Content-Description", "File Transfer")
 		//c.Header("Content-Transfer-Encoding", "binary")
 		//c.Header("Content-Disposition", "attachment; filename="+pa)

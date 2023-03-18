@@ -1,0 +1,21 @@
+INSERT INTO `goods` VALUES ('1','2022-03-28 17:35:22','2022-03-28 17:35:22',null,null,20,20,0,0,0,0,0,'vans og系列','sn20220328666',0,0,0,256.5,256.5,'vans 经典og系列','url','url','url');
+
+
+INSERT INTO `goods_category_brand` VALUES ('1','2022-03-28 17:35:22','2022-03-28 17:35:22',null,null,1,1);
+
+
+
+INSERT INTO `goods` VALUES ('1','2022-03-28 17:35:22','2022-03-28 17:35:22',null,null,20,0,0,0,0,0,'vans og系列','sn20220328666',0,0,0,256.5,256.5,'vans 经典og系列','url','url','url');
+
+
+INSERT INTO `brands` VALUES (1, '2020-09-02 01:10:50','2020-09-02 01:10:50',null,0,'Vans', 'url');
+
+INSERT INTO `category` VALUES (1000, '2020-09-02 01:10:50','2020-09-02 01:10:50',null,0,'鞋品',NULL,1,0);
+
+
+
+INSERT INTO `goods` VALUES (1000,'2020-09-02 01:10:50','2020-09-02 01:10:50',null,0,1001,1,0,0,0,0,0,'vans og','sn88886666501',0,0,0,250.0,350.50,'vans最经典系列！og classify ！','[\"url\",\"url\"]','[\"url\",\"url\"]','url');
+
+
+
+INSERT INTO `goods_category_brand` VALUES (1000, '2020-09-02 01:10:50','2020-09-02 01:10:50',null,0,1000,1);
