@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8"/>
+    <title>index</title>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div> 主页扫码！</div>
+
+<iframe id="iframe_display" name="iframe_display" style="display: none;"></iframe>
+<form action="/v1/file/upload" method="post" enctype="multipart/form-data" target="iframe_display">
+    <div>
+        <input type="file" name="uploads" multiple="multiple"/>
+    </div>
+    <br/>
+    <div>
+        <button onclick="myReload()">上传文件</button>
+    </div>
+</form>
+<div id="sip">
+    <div >
+        <img v-bind:src="mybase" alt="二维码加载中">
+    </div>
+    <select  onchange="" v-on:change="getQRData()">
+        <option v-for="(ip,i) in ips" v-bind:value="ip" >{{ ip }}</option>
+    </select>
+</div>
+
+<br>
+<button><a href="/v1/file/list" methods="get">list</a></button>
+<br>
+<hr>
+
+<div id="datalist" v-cloak>
+    <div v-for="file in file_lists">
+        <div>
+            <b><a v-bind:href=downApi+file.name download>{{ file.name }}</a></b>
+            <button v-on:click="qrdown(file.name)">二维码下载</button>
+            <div v-bind:title="file.path">{{ file.path }}</div>
+            <div v-bind:title="file.size">{{ file.size }}kb</div>
+            <div v-bind:title="file.date">{{ file.date }}</div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/vue/dist/vue.global.js"></script>
+<script>
+    const vueA = Vue.createApp({
+        data() {
+            return {
+                file_lists: [],
+                qr: "",
+                downApi: "/v1/file/download/"
+            }
+        },
+        created() {
+            this.getFileData()
+        }, methods: {
+            getFileData() {
+                //axios发送ajax请求得到数据
+                axios.get("/v1/file/list")
+                    .then(response => {
+                        this.file_lists = response.data.data
+                    })
+            },
+            qrdown(name) {
+                axios.get("/v1/qr/qrcode/" + name)
+                    .then(response => {
+                        this.qr = response.data.base64
+                        console.log("ssss>?>>>>", this.qr)
+                    })
+            }
+        }
+    })
+    vueA.mount('#datalist')
+
+    const vueB = Vue.createApp({
+        data() {
+            return {
+                ips: [],
+                mybase: "",
+            }
+        },
+        created() {
+            this.getIpData()
+            this.getQRData()
+        },
+        methods: {
+            getIpData() {
+                //axios发送ajax请求得到数据
+                axios.get("/v1/base/ipview")
+                    .then(response => {
+                        this.ips = response.data.data
+                    })
+            },
+            getQRData() {
+                //axios发送ajax请求得到数据
+                axios.get("/v1/qr/qrview")
+                    .then(response => {
+                        this.mybase = response.data.base64
+                    })
+            },
+        }
+    })
+    vueB.mount('#sip')
+
+
+    let selectDom = document.querySelector('select'); //获取下拉框元素
+    selectDom.onchange = function () {
+        let index = this.options.selectedIndex;
+        let value = this.options[index].value;
+        let url = "/v1/base/myip?url=" + value
+        console.log(value);
+        axios.get(url)
+            .then(response => {
+                console.log(response.data)
+            })
+    }
+
+    function openView(s) {
+        window.open('./file/download/' + s.toString())
+    }
+
+    function myReload() {
+        window.location.reload()
+    }
+</script>

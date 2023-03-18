@@ -1,0 +1,9 @@
+#tools
+.idea/
+
+#projects
+tmp/
+template/lib/
+test/
+*.yaml
+*.sum
