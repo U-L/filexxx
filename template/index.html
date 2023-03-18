@@ -3,16 +3,21 @@
 <head>
     <meta charset="UTF-8"/>
     <title>index</title>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
 </head>
 <body>
 <iframe id="iframe_display" name="iframe_display" style="display: none;"></iframe>
-<form action="/v1/file/upload" method="post" enctype="multipart/form-data" target="iframe_display" >
+<form action="/v1/file/upload" method="post" enctype="multipart/form-data" target="iframe_display">
     <div>
         <input type="file" name="uploads" multiple="multiple"/>
     </div>
     <br/>
     <div>
-        <button onclick="myReload()" >上传文件</button>
+        <button onclick="myReload()">上传文件</button>
     </div>
 </form>
 
@@ -20,8 +25,8 @@
 <br>
 <hr>
 <hr>
-<div id="datalist">
-    <div v-for="file in file_lists">
+<div id="datalist" v-cloak>
+    <div v-for="file in file_lists" >
         <div>
             <b><a v-bind:href=downApi+file.name download>{{ file.name }}</a></b>
             <div v-bind:title="file.path">{{ file.path }}</div>
@@ -33,9 +38,11 @@
 
 </body>
 </html>
-<script src="js/vue.global.js"></script>
-<script src="js/axios.min.js"></script>
-<script src="js/jquery.min.js"></script>
+<!--<script src="js/vue.global.js"></script>-->
+<!--<script src="js/axios.min.js"></script>-->
+<!--<script src="js/jquery.min.js"></script>-->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/vue/dist/vue.global.js"></script>
 <script>
     const vueA = Vue.createApp({
         data() {
@@ -65,8 +72,7 @@
         window.open('./file/download/' + s.toString())
     }
 
-    function myReload(){
+    function myReload() {
         window.location.reload()
     }
-
 </script>
