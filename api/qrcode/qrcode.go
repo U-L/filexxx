@@ -12,7 +12,6 @@ func SetUrl(host string,post int,api string) string{
 	if host == ""{
 		host= global.Address.Addr[0]
 	}
-	fmt.Println(host,global.MyIP)
 	return fmt.Sprintf("http://%s:%d%s",host,post,api)
 }
 

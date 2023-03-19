@@ -23,19 +23,18 @@
     </div>
 </form>
 <div id="sip">
-    <div >
+    <div>
         <img v-bind:src="mybase" alt="二维码加载中">
     </div>
-    <select  onchange="" v-on:change="getQRData()">
-        <option v-for="(ip,i) in ips" v-bind:value="ip" >{{ ip }}</option>
+    <div>当前ip为： {{reip}} </div>
+    <select  v-on:change="setIpAndQr()" v-model="reip">
+        <option v-for="(ip,i) in ips" v-bind:value="ip">{{ ip }}</option>
     </select>
 </div>
-
 <br>
 <button><a href="/v1/file/list" methods="get">list</a></button>
 <br>
 <hr>
-
 <div id="datalist" v-cloak>
     <div v-for="file in file_lists">
         <div>
@@ -47,13 +46,12 @@
         </div>
     </div>
 </div>
-
-
 </body>
 </html>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://unpkg.com/vue/dist/vue.global.js"></script>
 <script>
+
     const vueA = Vue.createApp({
         data() {
             return {
@@ -76,7 +74,6 @@
                 axios.get("/v1/qr/qrcode/" + name)
                     .then(response => {
                         this.qr = response.data.base64
-                        console.log("ssss>?>>>>", this.qr)
                     })
             }
         }
@@ -88,49 +85,50 @@
             return {
                 ips: [],
                 mybase: "",
+                reip: "",
+                tmp_ip: "",
             }
         },
         created() {
-            this.getIpData()
-            this.getQRData()
+           this.getIpData()
+           this.getQRData()
         },
         methods: {
-            getIpData() {
+            //同步请求设置 setip无默认值
+           async getIpData() {
                 //axios发送ajax请求得到数据
-                axios.get("/v1/base/ipview")
+              await  axios.get("/v1/base/ipview")
                     .then(response => {
                         this.ips = response.data.data
+                        this.reip=this.ips[0]
                     })
+              await this.setIpData(this.ip)
             },
             getQRData() {
                 //axios发送ajax请求得到数据
+                // let url =
                 axios.get("/v1/qr/qrview")
                     .then(response => {
                         this.mybase = response.data.base64
                     })
             },
+            setIpData(ip){
+                axios.get("/v1/base/myip?url=" + ip)
+                    .then(response => {
+                        console.log(response.data)
+                    })
+            },
+           setIpAndQr(){
+               this.getQRData()
+               this.setIpData(this.reip)
+            }
         }
     })
     vueB.mount('#sip')
 
 
-    let selectDom = document.querySelector('select'); //获取下拉框元素
-    selectDom.onchange = function () {
-        let index = this.options.selectedIndex;
-        let value = this.options[index].value;
-        let url = "/v1/base/myip?url=" + value
-        console.log(value);
-        axios.get(url)
-            .then(response => {
-                console.log(response.data)
-            })
-    }
-
-    function openView(s) {
-        window.open('./file/download/' + s.toString())
-    }
 
     function myReload() {
-        window.location.reload()
+       // window.location.reload()
     }
 </script>

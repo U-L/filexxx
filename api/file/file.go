@@ -13,12 +13,16 @@ import (
 func UploadFile(c *gin.Context) {
 	form, _ := c.MultipartForm()
 	f := form.File["uploads"]
-	for _, file := range f {
-		zap.S().Infof("上传文件：%s",file.Filename)
-		dst := path.Join("./tmp/upload/", file.Filename)
-		err := c.SaveUploadedFile(file, dst)
+	for _, files := range f {
+		zap.S().Infof("上传文件：%s",files.Filename)
+		//缩短文件名
+		//if len(files.Filename) > 60 {
+		//	files.Filename=files.Filename[:60]
+		//}
+		dst := path.Join("./tmp/upload/", files.Filename)
+		err := c.SaveUploadedFile(files, dst)
 		if err != nil {
-			return
+			zap.S().Info("保存文件错误！：err%s",err.Error())
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{
