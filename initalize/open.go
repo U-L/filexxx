@@ -29,5 +29,6 @@ func InitOpen() {
 	if err != nil {
 		zap.S().Info("浏览器打开失败 ：",err)
 	}
+
 	zap.S().Info("浏览器打开成功 ：",url)
 }

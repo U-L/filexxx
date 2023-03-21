@@ -8,53 +8,137 @@
             display: none;
         }
     </style>
+    <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css"/>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.global.js"></script>
+    <script src="//unpkg.com/element-plus"></script>
 </head>
 <body>
-<div> 主页扫码！</div>
 
-<iframe id="iframe_display" name="iframe_display" style="display: none;"></iframe>
-<form action="/v1/file/upload" method="post" enctype="multipart/form-data" target="iframe_display">
+<div class="first_part">
+    <el-backtop :right="100" :bottom="100" />
+    <span id="sip">
+    <el-card class="upload_card" shadow="always">
+    <div> 主页扫码！</div>
     <div>
-        <input type="file" name="uploads" multiple="multiple"/>
+        <el-image
+                style="width: 100px; height: 100px; boxShadow :--el-box-shadow-light;border-radius: 4px;border: 1px solid"
+                v-bind:src="mybase" alt="二维码加载中"/>
     </div>
-    <br/>
     <div>
-        <button onclick="myReload()">上传文件</button>
+        <el-text class="mx-1" type="info">当前ip为： {{reip}}</el-text>
     </div>
-</form>
-<div id="sip">
-    <div>
-        <img v-bind:src="mybase" alt="二维码加载中">
-    </div>
-    <div>当前ip为： {{reip}} </div>
-    <select  v-on:change="setIpAndQr()" v-model="reip">
-        <option v-for="(ip,i) in ips" v-bind:value="ip">{{ ip }}</option>
-    </select>
-</div>
-<br>
-<button><a href="/v1/file/list" methods="get">list</a></button>
-<br>
-<hr>
-<div id="datalist" v-cloak>
-    <div v-for="file in file_lists">
-        <div>
-            <b><a v-bind:href=downApi+file.name download>{{ file.name }}</a></b>
-            <button v-on:click="qrdown(file.name)">二维码下载</button>
-            <div v-bind:title="file.path">{{ file.path }}</div>
-            <div v-bind:title="file.size">{{ file.size }}kb</div>
-            <div v-bind:title="file.date">{{ file.date }}</div>
+    <el-select v-on:change="setIpAndQr()" v-model="reip" class="m-2" size="large">
+        <el-option
+                v-for="(ip,i) in ips" v-bind:value="ip">{{ip}}
+        </el-option>
+    </el-select>
+    </el-card>
+</span>
+    <span id="uploadApp">
+    <el-card class="upload_card" shadow="always">
+    <el-upload
+            class="upload-demo"
+            drag
+            action="/v1/file/upload"
+            multiple
+            name="uploads"
+    >
+        <el-icon class="el-icon--upload"></el-icon>
+        <div class="el-upload__text">
+            Drop file here or <em>click to upload</em>
         </div>
+        <template #tip>
+            <div class="el-upload__tip">
+                上传列表
+            </div>
+        </template>
+    </el-upload>
+</el-card>
+</span>
+</div>
+<div id="datalist">
+    <div v-cloak class="listview">
+        <div v-for="file in file_lists">
+            <el-card class="box-card" shadow="hover">
+                <template #header>
+                    <div class="card-header">
+                        <el-link v-bind:href=downApi+file.name download type="primary">{{ file.viewName }}</el-link>
+                        <el-button type="primary" v-on:click="qrdown(file.name)">
+                            二维码
+                        </el-button>
+
+                    </div>
+                </template>
+                <div v-bind:title="file.path">
+                    <el-text class="w-100px" truncated>文件位置： {{ file.path }}</el-text>
+                </div>
+                <div v-bind:title="file.size">
+                    <el-text>文件大小：{{ file.size }}kb</el-text>
+                </div>
+                <div v-bind:title="file.date">
+                    <el-text>文件日期： {{ file.date }}</el-text>
+                </div>
+            </el-card>
+        </div>
+    </div>
+    <div >
+        <el-card class="box-card" shadow="hover">
+            <template #header>
+                <div class="card-header">
+                    <el-text type="primary">图片下载二维码</el-text>
+                </div>
+            </template>
+            <el-image
+                    style="width: 100px; height: 100px; boxShadow :--el-box-shadow-light;border-radius: 4px;border: 1px solid"
+                    v-bind:src="qr"/>
+        </el-card>
     </div>
 </div>
 </body>
 </html>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<script src="https://unpkg.com/vue/dist/vue.global.js"></script>
-<script>
+<style>
+    body {
+        margin: 0 auto;
+    }
 
-    const vueA = Vue.createApp({
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .listview {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .upload_card:first-child {
+        text-align: center;
+    }
+    .img-card{
+
+    }
+    .box-card {
+        width: 330px;
+    }
+
+
+</style>
+<script>
+    const vueUploadFile = Vue.createApp({
+        el: "uploadApp",
+        data() {
+            return {}
+        },
+    })
+    vueUploadFile.use(ElementPlus).mount('#uploadApp')
+
+    const vueDataListandDown = Vue.createApp({
         data() {
             return {
+                item: 0,
                 file_lists: [],
                 qr: "",
                 downApi: "/v1/file/download/"
@@ -74,13 +158,16 @@
                 axios.get("/v1/qr/qrcode/" + name)
                     .then(response => {
                         this.qr = response.data.base64
+                        console.log(this.qr)
                     })
+
             }
         }
     })
-    vueA.mount('#datalist')
+    vueDataListandDown.use(ElementPlus).mount('#datalist')
 
-    const vueB = Vue.createApp({
+    const vueIpAndQr = Vue.createApp({
+        el: "#sip",
         data() {
             return {
                 ips: [],
@@ -90,45 +177,41 @@
             }
         },
         created() {
-           this.getIpData()
-           this.getQRData()
+            this.getIpData()
+            this.getQRData()
         },
         methods: {
             //同步请求设置 setip无默认值
-           async getIpData() {
+            async getIpData() {
                 //axios发送ajax请求得到数据
-              await  axios.get("/v1/base/ipview")
+                await axios.get("/v1/base/ipview")
                     .then(response => {
                         this.ips = response.data.data
-                        this.reip=this.ips[0]
+                        this.reip = response.data.tmpIp
+                        //this.reip = this.ips[0]
+                        console.log("this.reip>?>....>>>>", this.reip)
                     })
-              await this.setIpData(this.ip)
+                await this.setIpData(this.ip)
             },
             getQRData() {
                 //axios发送ajax请求得到数据
-                // let url =
                 axios.get("/v1/qr/qrview")
                     .then(response => {
                         this.mybase = response.data.base64
                     })
             },
-            setIpData(ip){
+            setIpData(ip) {
                 axios.get("/v1/base/myip?url=" + ip)
                     .then(response => {
+                        console.log("ip>>>>>", ip)
                         console.log(response.data)
                     })
             },
-           setIpAndQr(){
-               this.getQRData()
-               this.setIpData(this.reip)
+            async setIpAndQr() {
+                await this.setIpData(this.reip)
+                this.getQRData()
             }
         }
     })
-    vueB.mount('#sip')
-
-
-
-    function myReload() {
-       // window.location.reload()
-    }
+    vueIpAndQr.use(ElementPlus).mount('#sip')
 </script>

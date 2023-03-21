@@ -31,9 +31,9 @@ func UploadFile(c *gin.Context) {
 }
 
 func ListFile(c *gin.Context) {
-	//dir := GetAbsFile()+"/tmp/upload/*" //产品环境
-	dir := GetAbsFile()+"/files/*" //开发环境
-	zap.S().Info(dir)
+	dir := GetAbsFile()+"/tmp/upload/*" //产品环境
+	//dir := GetAbsFile()+"/files/*" //开发环境
+	//zap.S().Info(dir)
 	data := GetFileData(dir)
 	c.JSON(http.StatusOK,gin.H{
 		"msg":"文件列表",
@@ -43,7 +43,8 @@ func ListFile(c *gin.Context) {
 
 func DownloadFile(c *gin.Context) {
 	if pa := c.Param("name"); pa != "" {
-		target := filepath.Join(GetAbsFile()+"/files/", pa)
+		//target := filepath.Join(GetAbsFile()+"/files/", pa)
+		target := filepath.Join(GetAbsFile()+"/tmp/upload/", pa)
 		fmt.Println(target)
 		//c.Header("Content-Description", "File Transfer")
 		//c.Header("Content-Transfer-Encoding", "binary")

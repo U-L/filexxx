@@ -6,22 +6,37 @@ import (
 	"net/http"
 )
 
+// SetHost 设置Ip初始值 和 刷新保留Ip
+func SetHost(host string) string {
+	if host == "" {
+		host = global.Address.Addr[0]
+	} else if host == "undefined" {
+		host = global.MyIPTmp
+	}
+	return host
+}
+
+//GetIpData 获取所有ip api
 func GetIpData(c *gin.Context) {
-	c.JSON(http.StatusOK,gin.H{
-		"data": global.Address.Addr,
+	c.JSON(http.StatusOK, gin.H{
+		"data":  global.Address.Addr,
+		"tmpIp": SetHost(global.MyIP),
 	})
 }
 
-func SelectIp(c *gin.Context){
-	if url:=c.Query("url"); url!=""{
-		global.MyIP = url
-		c.JSON(http.StatusOK,gin.H{
-			"msg":"请求成功",
+// SelectIp 设置ip
+func SelectIp(c *gin.Context) {
+	if url := c.Query("url"); url != "" {
+		global.MyIP = SetHost(url)
+		c.JSON(http.StatusOK, gin.H{
+			"msg": "请求成功",
 		})
-	}else{
-		c.JSON(http.StatusBadRequest,gin.H{
-			"error":"请求出错",
+		global.MyIPTmp = global.MyIP
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "请求出错",
 		})
 	}
-
 }
+
+

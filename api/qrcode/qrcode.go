@@ -2,17 +2,18 @@ package qrcode
 
 import (
 	"encoding/base64"
+	"filexxx/api"
 	"filexxx/global"
+
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/skip2/go-qrcode"
 	"net/http"
+
 )
-func SetUrl(host string,post int,api string) string{
-	if host == ""{
-		host= global.Address.Addr[0]
-	}
-	return fmt.Sprintf("http://%s:%d%s",host,post,api)
+func SetUrl(host string,post int,url string) string{
+	host = api.SetHost(host)
+	return fmt.Sprintf("http://%s:%d%s",host,post,url)
 }
 
 func GetQRFunc(c string) string {
@@ -22,7 +23,6 @@ func GetQRFunc(c string) string {
 
 func GetQrBase(c *gin.Context) {
 	url := SetUrl(global.MyIP,global.MyConfig.Port,"/static")
-	fmt.Println("url",url)
 	purl :=GetQRFunc(url)
 	c.JSON(http.StatusOK,gin.H{
 		"base64": "data:image/png;base64,"+purl,

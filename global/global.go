@@ -1,6 +1,8 @@
 package global
 
-import "filexxx/config"
+import (
+	"filexxx/config"
+)
 
 var (
 	MyConfig *config.MyConfig = &config.MyConfig{
@@ -8,7 +10,9 @@ var (
 		Port: 8090,
 	}
 
+
 	Address *config.Address = &config.Address{}
 
 	MyIP string
+	MyIPTmp string
 )
