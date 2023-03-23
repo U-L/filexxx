@@ -15,9 +15,8 @@
 </head>
 <body>
 
-<div class="first_part">
-    <el-backtop :right="100" :bottom="100" />
-    <span id="sip">
+<el-backtop :right="100" :bottom="100"/>
+<span id="sip">
     <el-card class="upload_card" shadow="always">
     <div> 主页扫码！</div>
     <div>
@@ -35,64 +34,69 @@
     </el-select>
     </el-card>
 </span>
-    <span id="uploadApp">
-    <el-card class="upload_card" shadow="always">
-    <el-upload
-            class="upload-demo"
-            drag
-            action="/v1/file/upload"
-            multiple
-            name="uploads"
-    >
-        <el-icon class="el-icon--upload"></el-icon>
-        <div class="el-upload__text">
-            Drop file here or <em>click to upload</em>
-        </div>
-        <template #tip>
-            <div class="el-upload__tip">
-                上传列表
-            </div>
-        </template>
-    </el-upload>
-</el-card>
-</span>
-</div>
+
+
 <div id="datalist">
+    <div id="uploadApp">
+        <el-card class="upload_card" shadow="always">
+            <el-upload
+                    class="upload-demo"
+                    drag
+                    action="/v1/file/upload"
+                    multiple
+                    name="uploads"
+                    :on-success="handleSuccess"
+            >
+                <el-icon class="el-icon--upload"></el-icon>
+                <div class="el-upload__text">
+                    拖拽文件上传 或者 <em>点击这里上传文件</em>
+                </div>
+                <template #tip>
+                    <div class="el-upload__tip">
+                        上传列表
+                    </div>
+                </template>
+            </el-upload>
+        </el-card>
+    </div>
+
     <div v-cloak class="listview">
         <div v-for="file in file_lists">
             <el-card class="box-card" shadow="hover">
                 <template #header>
                     <div class="card-header">
                         <el-link v-bind:href=downApi+file.name download type="primary">{{ file.viewName }}</el-link>
-                        <el-button type="primary" v-on:click="qrdown(file.name)">
-                            二维码
-                        </el-button>
-
+                       <el-button type="primary">
+                           <a v-bind:href=downApi+file.name download type="primary" style="text-decoration:none;color: white">
+                               下载文件
+                           </a>
+                       </el-button>
                     </div>
                 </template>
-                <div v-bind:title="file.path">
-                    <el-text class="w-100px" truncated>文件位置： {{ file.path }}</el-text>
-                </div>
+
                 <div v-bind:title="file.size">
                     <el-text>文件大小：{{ file.size }}kb</el-text>
                 </div>
                 <div v-bind:title="file.date">
                     <el-text>文件日期： {{ file.date }}</el-text>
                 </div>
+                <div v-bind:title="file.path">
+                    <el-text class="w-100px" truncated>文件位置： {{ file.path }}</el-text>
+                </div>
+                <el-button type="primary" v-on:click="qrdown(file.name)">
+                    二维码
+                </el-button>
+                <el-button type="danger" v-on:click="deleteFile(file.name)">
+                    删除文件
+                </el-button>
             </el-card>
         </div>
     </div>
-    <div >
-        <el-card class="box-card" shadow="hover">
-            <template #header>
-                <div class="card-header">
-                    <el-text type="primary">图片下载二维码</el-text>
-                </div>
-            </template>
-            <el-image
-                    style="width: 100px; height: 100px; boxShadow :--el-box-shadow-light;border-radius: 4px;border: 1px solid"
-                    v-bind:src="qr"/>
-        </el-card>
+    <div>
+        <el-affix position="bottom" :offset="10">
+            <div>扫码查看</div>
+            <el-image class="img_qr2" v-bind:src="qr"/>
+        </el-affix>
     </div>
 </div>
 </body>
@@ -114,41 +118,47 @@
         flex-wrap: wrap;
     }
 
-    .upload_card:first-child {
+    .upload_card:nth-of-type(odd) {
         text-align: center;
     }
-    .img-card{
 
-    }
     .box-card {
         width: 330px;
     }
 
+    .img_qr2 {
+        text-align: center;
+        width: 100px;
+        height: 100px;
+        boxShadow: --el-box-shadow-light;
+        border-radius: 4px;
+        border: 1px solid
+    }
 
+    .img_qr2:hover {
+        transform: scale(1.5);
+    }
 </style>
 <script>
-    const vueUploadFile = Vue.createApp({
-        el: "uploadApp",
-        data() {
-            return {}
-        },
-    })
-    vueUploadFile.use(ElementPlus).mount('#uploadApp')
-
     const vueDataListandDown = Vue.createApp({
+        el: "datalist",
         data() {
             return {
                 item: 0,
                 file_lists: [],
                 qr: "",
-                downApi: "/v1/file/download/"
+                downApi: "/v1/file/download/",
+                delApi: "/v1/file/delete/"
             }
         },
         created() {
             this.getFileData()
         }, methods: {
+            handleSuccess() {
+                //暂时使用遍历 后续会改进
+                this.getFileData()
+            },
             getFileData() {
-                //axios发送ajax请求得到数据
                 axios.get("/v1/file/list")
                     .then(response => {
                         this.file_lists = response.data.data
@@ -160,7 +170,13 @@
                         this.qr = response.data.base64
                         console.log(this.qr)
                     })
-
+            },
+            deleteFile(name) {
+                axios.get(this.delApi + name)
+                    .then(response => {
+                        //暂时使用遍历 后续会改进
+                        this.getFileData()
+                    })
             }
         }
     })
@@ -188,8 +204,6 @@
                     .then(response => {
                         this.ips = response.data.data
                         this.reip = response.data.tmpIp
-                        //this.reip = this.ips[0]
-                        console.log("this.reip>?>....>>>>", this.reip)
                     })
                 await this.setIpData(this.ip)
             },
@@ -203,7 +217,6 @@
             setIpData(ip) {
                 axios.get("/v1/base/myip?url=" + ip)
                     .then(response => {
-                        console.log("ip>>>>>", ip)
                         console.log(response.data)
                     })
             },

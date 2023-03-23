@@ -1,10 +1,9 @@
 package config
 
 type MyConfig struct {
-	Host string `mapstructure:"host" json:"host"`
-	Port int    `mapstructure:"port" json:"port"`
-
+	Host string
+	Port int
 }
 type Address struct {
-	Addr []string `mapstructure:"addr" json:"addr"`
+	Addr []string
 }

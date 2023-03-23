@@ -12,6 +12,7 @@ func InitFileRouter(Router *gin.RouterGroup)  {
 		FileRouter.POST("upload",file.UploadFile)
 		FileRouter.GET("list",file.ListFile)
 		FileRouter.GET("download/:name",file.DownloadFile)
+		FileRouter.GET("delete/:name",file.RemoveFile)
 	}
 
 }
