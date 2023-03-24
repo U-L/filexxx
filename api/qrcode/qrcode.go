@@ -22,7 +22,7 @@ func GetQRFunc(c string) string {
 }
 
 func GetQrBase(c *gin.Context) {
-	url := SetUrl(global.MyIP,global.MyConfig.Port,"/static")
+	url := SetUrl(global.Address.MyIP,global.MyConfig.Port,"/static")
 	purl :=GetQRFunc(url)
 	c.JSON(http.StatusOK,gin.H{
 		"base64": "data:image/png;base64,"+purl,
@@ -31,7 +31,7 @@ func GetQrBase(c *gin.Context) {
 
 func QrCodesDown(c *gin.Context) {
 	if pa:=c.Param("purl");pa != ""{
-		url := SetUrl(global.MyIP,global.MyConfig.Port,"/v1/file/download/")
+		url := SetUrl(global.Address.MyIP,global.MyConfig.Port,"/v1/file/download/")
 		purl :=GetQRFunc((url) +pa)
 		c.JSON(http.StatusOK,gin.H{
 			"base64": "data:image/png;base64,"+purl,

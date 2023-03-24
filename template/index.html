@@ -61,16 +61,17 @@
     </div>
 
     <div v-cloak class="listview">
-        <div v-for="file in file_lists">
+        <div v-for="(file,id) in file_lists" :key="file.id">
             <el-card class="box-card" shadow="hover">
                 <template #header>
                     <div class="card-header">
                         <el-link v-bind:href=downApi+file.name download type="primary">{{ file.viewName }}</el-link>
-                       <el-button type="primary">
-                           <a v-bind:href=downApi+file.name download type="primary" style="text-decoration:none;color: white">
-                               下载文件
-                           </a>
-                       </el-button>
+                        <el-button type="primary">
+                            <a v-bind:href=downApi+file.name download type="primary"
+                               style="text-decoration:none;color: white">
+                                下载文件
+                            </a>
+                        </el-button>
                     </div>
                 </template>
 
@@ -127,7 +128,6 @@
     }
 
     .img_qr2 {
-        text-align: center;
         width: 100px;
         height: 100px;
         boxShadow: --el-box-shadow-light;
@@ -140,23 +140,35 @@
     }
 </style>
 <script>
+    let url = "ws://" + window.location.hostname + ":" + window.location.port + "/ws"
+    let ws = new WebSocket(url);
+    ws.onmessage = function (event) {
+        window.getFileData()
+    };
+
+    //DataList and curd
     const vueDataListandDown = Vue.createApp({
         el: "datalist",
         data() {
             return {
                 item: 0,
-                file_lists: [],
+                file_lists: new Map(),
                 qr: "",
                 downApi: "/v1/file/download/",
-                delApi: "/v1/file/delete/"
+                delApi: "/v1/file/delete/",
             }
         },
         created() {
             this.getFileData()
-        }, methods: {
+        },
+        mounted() {
+            window.getFileData = this.getFileData
+        },
+        methods: {
             handleSuccess() {
                 //暂时使用遍历 后续会改进
-                this.getFileData()
+                // this.getFileData()
+                ws.send("fileList")
             },
             getFileData() {
                 axios.get("/v1/file/list")
@@ -175,13 +187,14 @@
                 axios.get(this.delApi + name)
                     .then(response => {
                         //暂时使用遍历 后续会改进
-                        this.getFileData()
+                        //this.getFileData()
+                        ws.send("fileList")
                     })
-            }
+            },
         }
     })
     vueDataListandDown.use(ElementPlus).mount('#datalist')
-
+    //ip and qrcode
     const vueIpAndQr = Vue.createApp({
         el: "#sip",
         data() {

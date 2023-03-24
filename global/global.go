@@ -9,10 +9,7 @@ var (
 		Host: "127.0.0.1",
 		Port: 8090,
 	}
-
-
 	Address *config.Address = &config.Address{}
 
-	MyIP string
-	MyIPTmp string
+
 )

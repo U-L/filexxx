@@ -14,10 +14,6 @@ func UploadFile(c *gin.Context) {
 	f := form.File["uploads"]
 	for _, files := range f {
 		zap.S().Infof("上传文件：%s", files.Filename)
-		//缩短文件名
-		//if len(files.Filename) > 60 {
-		//	files.Filename=files.Filename[:60]
-		//}
 		dst := path.Join("./tmp/upload/", files.Filename)
 		err := c.SaveUploadedFile(files, dst)
 		if err != nil {
@@ -45,8 +41,13 @@ func DownloadFile(c *gin.Context) {
 		//target := filepath.Join(GetAbsFile()+"/files/", pa)
 		target := filepath.Join(GetAbsFile()+"/tmp/upload/", pa)
 		c.File(target)
+		c.JSON(http.StatusOK,gin.H{
+			"msg":"下载成功",
+		})
 	} else {
-		c.Status(http.StatusNotFound)
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "未找到文件",
+		})
 	}
 }
 
@@ -61,9 +62,14 @@ func RemoveFile(c *gin.Context) {
 				"error": "删除文件失败",
 			})
 		}
+		c.JSON(http.StatusOK,gin.H{
+			"msg":"删除成功",
+		})
 	} else {
 		c.JSON(http.StatusNotFound, gin.H{
 			"error": "未找到文件",
 		})
 	}
 }
+//func ListFileCache(c *gin.Context) {
+//}

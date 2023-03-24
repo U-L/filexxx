@@ -2,16 +2,21 @@ package main
 
 import (
 	"embed"
-	"filexxx/global"
-	"filexxx/initalize"
 	"fmt"
-	"go.uber.org/zap"
 	"io/fs"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
+
+	"filexxx/api/wsocket"
+	"filexxx/global"
+	"filexxx/initalize"
 )
+
 //go:embed template/*
 var f embed.FS
 
@@ -27,6 +32,14 @@ func main() {
 	initalize.InitGetIp()
 	//初始化路由
 	router := initalize.Routers()
+
+	hub := wsocket.NewHub()
+
+	go hub.Run()
+	router.GET("/ws", func(c *gin.Context) {
+		wsocket.WsApi(c, hub)
+	})
+
 	sfile, _ := fs.Sub(f,"template")
 	router.StaticFS("/static/", http.FS(sfile))
 	//router.StaticFile("/favicon.ico","./template/favicon.ico")
@@ -38,7 +51,6 @@ func main() {
 		if err := router.Run(fmt.Sprintf(":%d",global.MyConfig.Port)); err != nil {
 			zap.S().Info("程序启动失败: ", err.Error())
 		}
-
 	}()
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)

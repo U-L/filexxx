@@ -6,4 +6,6 @@ type MyConfig struct {
 }
 type Address struct {
 	Addr []string
+	MyIP string
+	MyIPTmp string
 }

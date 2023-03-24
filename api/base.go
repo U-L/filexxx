@@ -11,7 +11,7 @@ func SetHost(host string) string {
 	if host == "" {
 		host = global.Address.Addr[0]
 	} else if host == "undefined" {
-		host = global.MyIPTmp
+		host = global.Address.MyIPTmp
 	}
 	return host
 }
@@ -20,18 +20,18 @@ func SetHost(host string) string {
 func GetIpData(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"data":  global.Address.Addr,
-		"tmpIp": SetHost(global.MyIP),
+		"tmpIp": SetHost(global.Address.MyIP),
 	})
 }
 
 // SelectIp 设置ip
 func SelectIp(c *gin.Context) {
 	if url := c.Query("url"); url != "" {
-		global.MyIP = SetHost(url)
+		global.Address.MyIP = SetHost(url)
 		c.JSON(http.StatusOK, gin.H{
 			"msg": "请求成功",
 		})
-		global.MyIPTmp = global.MyIP
+		global.Address.MyIPTmp = global.Address.MyIP
 	} else {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "请求出错",
