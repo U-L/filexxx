@@ -55,7 +55,7 @@ func RemoveFile(c *gin.Context) {
 	if pa := c.Param("name"); pa != "" {
 		//target := filepath.Join(GetAbsFile()+"/files/", pa)
 		target := filepath.Join(GetAbsFile()+"/tmp/upload/", pa)
-		err := os.Remove(target)
+		err := os.RemoveAll(target)
 		if err != nil {
 			zap.S().Info("删除文件失败")
 			c.JSON(http.StatusBadRequest, gin.H{

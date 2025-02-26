@@ -7,12 +7,12 @@ import (
 )
 
 func InitFileRouter(Router *gin.RouterGroup)  {
-	FileRouter := Router.Group("file").Use(middleware.GinLogger())
+	FileRouter := Router.Group("file").Use(middleware.GinLogger(),middleware.Cors())
 	{
 		FileRouter.POST("upload",file.UploadFile)
 		FileRouter.GET("list",file.ListFile)
 		FileRouter.GET("download/:name",file.DownloadFile)
-		FileRouter.GET("delete/:name",file.RemoveFile)
+		FileRouter.DELETE("delete/:name",file.RemoveFile)
 	}
 
 }

@@ -8,7 +8,7 @@ import (
 	"runtime"
 )
 
-// OsSwitch 选择操作系统对应命令 低分支我使用switch不使用map
+// OsSwitch ..
 func OsSwitch() string{
 	switch runtime.GOOS {
 	case "linux":

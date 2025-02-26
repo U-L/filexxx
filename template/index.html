@@ -8,10 +8,14 @@
             display: none;
         }
     </style>
-    <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css"/>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="https://unpkg.com/vue/dist/vue.global.js"></script>
-    <script src="//unpkg.com/element-plus"></script>
+<!--    <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css"/>-->
+<!--    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>-->
+<!--    <script src="https://unpkg.com/vue/dist/vue.global.js"></script>-->
+<!--    <script src="//unpkg.com/element-plus"></script>-->
+    <link rel="stylesheet" href="./lib/index.css"/>
+    <script src="./lib/axios.min.js"></script>
+    <script src="./lib/vue.global.js"></script>
+    <script src="./lib/element.js"></script>
 </head>
 <body>
 
@@ -184,7 +188,7 @@
                     })
             },
             deleteFile(name) {
-                axios.get(this.delApi + name)
+                axios.delete(this.delApi + name)
                     .then(response => {
                         //暂时使用遍历 后续会改进
                         //this.getFileData()
@@ -228,7 +232,7 @@
                     })
             },
             setIpData(ip) {
-                axios.get("/v1/base/myip?url=" + ip)
+                axios.post("/v1/base/myip?url=" + ip)
                     .then(response => {
                         console.log(response.data)
                     })

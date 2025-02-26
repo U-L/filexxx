@@ -7,7 +7,7 @@ import (
 )
 
 func InitQrRouter(Router *gin.RouterGroup)  {
-	QrRouter := Router.Group("qr").Use(middleware.GinLogger())
+	QrRouter := Router.Group("qr").Use(middleware.GinLogger(),middleware.Cors())
 	{
 		QrRouter.GET("/qrcode/:purl",qrcode.QrCodesDown)
 		QrRouter.GET("/qrview",qrcode.GetQrBase)

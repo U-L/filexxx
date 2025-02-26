@@ -7,9 +7,9 @@ import (
 )
 
 func InitBaseRouter(Router *gin.RouterGroup)  {
-	BaseRouter := Router.Group("base").Use(middleware.GinLogger())
+	BaseRouter := Router.Group("base").Use(middleware.GinLogger(),middleware.Cors())
 	{
 		BaseRouter.GET("/ipview",api.GetIpData)
-		BaseRouter.GET("/myip",api.SelectIp)
+		BaseRouter.POST("/myip",api.SelectIp)
 	}
 }
